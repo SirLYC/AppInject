@@ -1,5 +1,6 @@
 package com.lyc.appinject;
 
+import com.lyc.appinject.annotations.InjectApi;
 import com.lyc.appinject.impl.Implementation;
 
 import java.util.ArrayList;
@@ -33,6 +34,11 @@ public class ModuleApi {
 
     }
 
+    /**
+     * Replace all the log in this module.
+     *
+     * @param userLogger {@link ILogger}
+     */
     public void setUserLogger(ILogger userLogger) {
         try {
             userLoggerLock.lock();
@@ -69,13 +75,20 @@ public class ModuleApi {
         return instance;
     }
 
+    /**
+     * Get only one implemented instance for the class. The param {@link InjectApi#oneToMany()} should be false
+     *
+     * @param clazz interface annotated with {@link com.lyc.appinject.annotations.InjectApi}
+     * @param <T>   serviceClass
+     * @return null if not found or create failed.
+     */
     @SuppressWarnings("unchecked")
-    public <T> T getSingleApi(Class<T> serviceClass) {
+    public <T> T getSingleApi(Class<T> clazz) {
         Object serviceImpl;
         Lock readLock = singleApiReadWriteLock.readLock();
         try {
             readLock.lock();
-            serviceImpl = singleApiCache.get(serviceClass);
+            serviceImpl = singleApiCache.get(clazz);
         } finally {
             readLock.unlock();
         }
@@ -84,9 +97,9 @@ public class ModuleApi {
             Lock writeLock = singleApiReadWriteLock.writeLock();
             try {
                 writeLock.lock();
-                serviceImpl = singleApiCache.get(serviceClass);
+                serviceImpl = singleApiCache.get(clazz);
                 if (serviceImpl == null) {
-                    Implementation impl = ModuleApiHolders.getInstance().getSingleImpl(serviceClass);
+                    Implementation impl = ModuleApiHolders.getInstance().getSingleImpl(clazz);
                     if (impl != null) {
                         serviceImpl = impl.createInstance();
                         if (serviceImpl != null) {
@@ -100,7 +113,7 @@ public class ModuleApi {
                     }
                 }
                 if (serviceImpl != null) {
-                    singleApiCache.put(serviceClass, serviceImpl);
+                    singleApiCache.put(clazz, serviceImpl);
                 }
             } finally {
                 writeLock.unlock();
@@ -110,14 +123,21 @@ public class ModuleApi {
         return (T) serviceImpl;
     }
 
+    /**
+     * Get all implemented instances for the class. The param {@link InjectApi#oneToMany()} should be true
+     *
+     * @param clazz interface annotated with {@link com.lyc.appinject.annotations.InjectApi}
+     * @param <T>   serviceClass
+     * @return nonnull but empty if not found or create failed.
+     */
     @SuppressWarnings("unchecked")
-    public <T> List<T> getOneToManyApiList(Class<T> extensionClass) {
+    public <T> List<T> getOneToManyApiList(Class<T> clazz) {
         List<T> result = new ArrayList<>();
         boolean hasCache;
         Lock readLock = oneToManyApiReadWriteLock.readLock();
         try {
             readLock.lock();
-            List<?> extensionList = oneToManyApiCache.get(extensionClass);
+            List<?> extensionList = oneToManyApiCache.get(clazz);
             hasCache = extensionList != null;
             if (hasCache) {
                 for (Object o : extensionList) {
@@ -132,14 +152,14 @@ public class ModuleApi {
             Lock writeLock = oneToManyApiReadWriteLock.writeLock();
             try {
                 writeLock.lock();
-                List<?> extensionList = oneToManyApiCache.get(extensionClass);
+                List<?> extensionList = oneToManyApiCache.get(clazz);
                 hasCache = extensionList != null;
                 if (hasCache) {
                     for (Object o : extensionList) {
                         result.add((T) o);
                     }
                 } else {
-                    List<Implementation> impls = ModuleApiHolders.getInstance().getOneToManyImplList(extensionClass);
+                    List<Implementation> impls = ModuleApiHolders.getInstance().getOneToManyImplList(clazz);
                     if (impls != null) {
                         for (Implementation impl : impls) {
                             Object instance = impl.createInstance();
@@ -151,7 +171,7 @@ public class ModuleApi {
                                 getLogger().i(TAG, "[getOneToManyApiList] cannot a new instance, impl=" + impl, null);
                             }
                         }
-                        oneToManyApiCache.put(extensionClass, Collections.unmodifiableList(result));
+                        oneToManyApiCache.put(clazz, Collections.unmodifiableList(result));
                     }
                 }
             } finally {

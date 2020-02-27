@@ -1,5 +1,6 @@
 apply plugin: 'groovy'
 apply plugin: 'maven'
+apply plugin: "com.gradle.plugin-publish"
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -10,18 +11,50 @@ dependencies {
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
-final String group = "com.lyc"
-final String version = commonProp['versionName']
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.gradle.publish:plugin-publish-plugin:0.9.10"
+    }
+}
+
+final groupId = commonProp['group']
+final versionName = commonProp['versionName']
+group = groupId
+version = versionName
 
 uploadArchives {
     repositories {
         mavenDeployer {
-            pom.groupId = group
-            pom.version = version
+            pom.groupId = groupId
+            pom.version = versionName
             pom.artifactId = "app-inject"
             repository(url: uri('../repo'))
         }
     }
+}
+
+pluginBundle {
+    website = 'https://github.com/SirLYC/AppInject'
+    vcsUrl = 'https://github.com/SirLYC/AppInject.git'
+    tags = ['Android', 'Gradle', 'plugin', 'Inject', 'Depence', 'Decouple']
+    description = commonProp['desc']
+
+    plugins {
+        appInjectPlugin {
+            id = 'com.lyc.app-inject'
+            displayName = 'AppInject'
+        }
+    }
+}
+
+tasks.withType(Javadoc) {
+    options.encoding = "UTF-8"
 }

@@ -10,6 +10,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by Liu Yuchuan on 2020/1/12.
+ * This is a class for ASM to modify byte code
  */
 class ModuleApiHolders {
 
