@@ -1,0 +1,53 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    final commonProp = new Properties()
+    commonProp.load(new FileInputStream(new File(rootDir, "common.properties")))
+    println("common.properties:\n$commonProp")
+    ext.commonProp = commonProp
+
+    ext.buildInfo = [
+            'compileSdkVersion': Integer.parseInt(commonProp['compileSdkVersion']),
+            'buildToolsVersion': commonProp['buildToolsVersion'],
+            'versionCode'      : Integer.parseInt(commonProp['versionCode']),
+            'versionName'      : commonProp['versionName'],
+            'targetSdkVersion' : Integer.parseInt(commonProp['targetSdkVersion']),
+            'minSdkVersion'    : Integer.parseInt(commonProp['minSdkVersion'])
+    ]
+
+    ext.android_gradle_version = '3.5.3'
+
+    boolean testLocal = commonProp["testInjectPluginLocal"] == "true"
+
+    repositories {
+        google()
+        jcenter()
+        if (testLocal) {
+            maven {
+                url uri("repo/")
+            }
+        }
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:$android_gradle_version"
+
+        if (testLocal) {
+            classpath "com.lyc:app-inject:${buildInfo['versionName']}"
+        }
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

@@ -1,0 +1,2 @@
+include ':sample', ':app-inject', ':app-inject-plugin', ':sample-api'
+rootProject.name='AppInject'
