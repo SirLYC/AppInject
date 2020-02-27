@@ -1,20 +1,19 @@
-apply plugin: 'com.android.application'
-
-if (commonProp["testInjectPluginLocal"] == "true") {
-    apply plugin: "com.lyc.app-inject"
-}
-
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion buildInfo['compileSdkVersion']
     buildToolsVersion buildInfo['buildToolsVersion']
 
     defaultConfig {
-        applicationId "com.lyc.appinject.sample"
         minSdkVersion buildInfo['minSdkVersion']
         targetSdkVersion buildInfo['targetSdkVersion']
         versionCode buildInfo['versionCode']
         versionName buildInfo['versionName']
+
+        consumerProguardFiles 'consumer-rules.pro'
     }
+
 
     buildTypes {
         release {
@@ -22,16 +21,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.core:core-ktx:1.2.0'
     implementation project(':app-inject')
     implementation project(":sample-api")
-    implementation project(":sample-impl")
-    implementation project(":sample-main-view")
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'

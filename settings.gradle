@@ -1,2 +1,2 @@
-include ':sample', ':app-inject', ':app-inject-plugin', ':sample-api'
+include ':sample', ':app-inject', ':app-inject-plugin', ':sample-api', ':sample-impl', ':sample-main-view'
 rootProject.name='AppInject'

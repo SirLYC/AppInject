@@ -1,4 +1,4 @@
-package com.lyc.appinject.sample.main;
+package com.lyc.appinject.sample.api;
 
 import com.lyc.appinject.annotations.InjectApi;
 
@@ -7,6 +7,6 @@ import com.lyc.appinject.annotations.InjectApi;
  */
 @InjectApi(oneToMany = true)
 public interface IOneToManyApi {
-    void logMsg();
+    String logMsg();
 }
 

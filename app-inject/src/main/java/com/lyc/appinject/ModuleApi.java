@@ -111,7 +111,7 @@ public class ModuleApi {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> getMultiImpls(Class<T> extensionClass) {
+    public <T> List<T> getOneToManyApiList(Class<T> extensionClass) {
         List<T> result = new ArrayList<>();
         boolean hasCache;
         Lock readLock = oneToManyApiReadWriteLock.readLock();
@@ -144,11 +144,11 @@ public class ModuleApi {
                         for (Implementation impl : impls) {
                             Object instance = impl.createInstance();
                             if (instance != null) {
-                                getLogger().i(TAG, "[getMultiImpls] create a new instance, impl=" + impl +
+                                getLogger().i(TAG, "[getOneToManyApiList] create a new instance, impl=" + impl +
                                         ", extensionImpl=" + instance + ", extensionImplClass=" + instance.getClass().getName(), null);
                                 result.add((T) instance);
                             } else {
-                                getLogger().i(TAG, "[getMultiImpls] cannot a new instance, impl=" + impl, null);
+                                getLogger().i(TAG, "[getOneToManyApiList] cannot a new instance, impl=" + impl, null);
                             }
                         }
                         oneToManyApiCache.put(extensionClass, Collections.unmodifiableList(result));

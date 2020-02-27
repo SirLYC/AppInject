@@ -1,8 +1,7 @@
-package com.lyc.appinject.sample.main;
-
-import android.util.Log;
+package com.lyc.sample.impl;
 
 import com.lyc.appinject.annotations.InjectApiImpl;
+import com.lyc.appinject.sample.api.ISingleApi;
 
 /**
  * Created by Liu Yuchuan on 2020/2/27.
@@ -10,7 +9,7 @@ import com.lyc.appinject.annotations.InjectApiImpl;
 @InjectApiImpl(api = ISingleApi.class)
 public class SingleApiImpl implements ISingleApi {
     @Override
-    public void logMsg() {
-        Log.d("ISingleApi", "I'm SingleApiImpl!");
+    public String logMsg() {
+        return "I'm SingleApiImpl!";
     }
 }

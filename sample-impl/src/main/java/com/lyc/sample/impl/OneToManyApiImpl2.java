@@ -1,8 +1,7 @@
-package com.lyc.appinject.sample.main;
-
-import android.util.Log;
+package com.lyc.sample.impl;
 
 import com.lyc.appinject.annotations.InjectApiImpl;
+import com.lyc.appinject.sample.api.IOneToManyApi;
 
 /**
  * Created by Liu Yuchuan on 2020/2/27.
@@ -10,7 +9,7 @@ import com.lyc.appinject.annotations.InjectApiImpl;
 @InjectApiImpl(api = IOneToManyApi.class)
 public class OneToManyApiImpl2 implements IOneToManyApi {
     @Override
-    public void logMsg() {
-        Log.d("IOneToManyApi", "I'm OneToManyApiImpl2!");
+    public String logMsg() {
+        return "I'm OneToManyApiImpl2!";
     }
 }
