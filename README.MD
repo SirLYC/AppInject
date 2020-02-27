@@ -2,7 +2,48 @@
 
 A lightweight cross-module dependency-injection library for Android.
 
+[ ![AppInject](https://api.bintray.com/packages/liuyuchuan/maven/app-inject-plugin/images/download.svg?version=0.2.0) ](https://bintray.com/liuyuchuan/maven/app-inject-plugin/0.2.0/link)
+
+[ ![AppInjectPlugin](https://api.bintray.com/packages/liuyuchuan/maven/app-inject/images/download.svg?version=0.2.0) ](https://bintray.com/liuyuchuan/maven/app-inject/0.2.0/link)
+
 ## Import
+
+Root project's `build.gradle`:
+
+``` groovy
+buildscript {
+    repositories {
+        //...
+        jcenter()
+    }
+    dependencies {
+        // ...
+        classpath "com.lyc:app-inject-plugin:latest.release"
+    }
+}
+```
+
+In your `app` module (module to output apk), `build.gradle`:
+
+``` groovy
+apply plugin: 'com.android.application'
+// must be applied after 'application' plugin
+apply plugin: "com.lyc.app-inject-plugin"
+
+dependencies {
+    // provide Annotations and AppInject API
+    implementation "com.lyc:app-inject:latest.release"
+}
+```
+
+It's recommond to provide AppInject API in base module as follow:
+
+``` groovy
+dependencies {
+    // pass dependency to other modules
+    api "com.lyc:app-inject:latest.release"
+}
+```
 
 ## Use
 

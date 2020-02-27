@@ -67,6 +67,10 @@ pluginBundle {
     }
 }
 
+if (publishPlugin) {
+    apply from: 'publish.gradle'
+}
+
 tasks.withType(Javadoc) {
     options.encoding = "UTF-8"
 }

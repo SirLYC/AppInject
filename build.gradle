@@ -24,14 +24,15 @@ buildscript {
     final privateProp = new Properties()
     final privateFile = new File(rootDir, "private.properties")
     ext.publishAppInjectModule = privateFile.exists() && commonProp["enablePublishAppInject"] == "true"
-    if (publishAppInjectModule) {
+    ext.publishPlugin = privateFile.exists() && commonProp['enablePublishPlugin'] == "true"
+    if (publishAppInjectModule || publishPlugin) {
         privateProp.load(new FileInputStream(privateFile))
         println("private.properties:\n$privateProp")
         ext.privateProp = privateProp
     }
 
     repositories {
-        if (testLocal) {
+        if (testLocal && commonProp['testRemoteRepo'] != "true") {
             maven {
                 url uri("repo/")
             }
@@ -44,9 +45,12 @@ buildscript {
 
         if (testLocal) {
             classpath "${commonProp['group']}:${commonProp['pluginId']}:${buildInfo['versionName']}"
+        } else if (commonProp['testRemoteRepo'] == "true") {
+            // remote repository
+            classpath 'com.lyc:app-inject-plugin:latest.release'
         }
 
-        if (publishAppInjectModule) {
+        if (publishAppInjectModule || publishPlugin) {
             classpath 'com.novoda:bintray-release:0.9.2'
         }
 
