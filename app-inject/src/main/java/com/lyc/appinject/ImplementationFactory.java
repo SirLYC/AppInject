@@ -36,7 +36,7 @@ public class ImplementationFactory {
                     return new ImplementationGetInstance(clazz);
             }
         } else {
-            ModuleApi.getLogger().e(TAG, "for clazz: " + (clazz == null ? "null" : clazz.getName()) + ", createMethod=null, name=" + name, null);
+            AppInject.getLogger().e(TAG, "for clazz: " + (clazz == null ? "null" : clazz.getName()) + ", createMethod=null, name=" + name, null);
         }
 
         return new ImplementationNew(clazz);

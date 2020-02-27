@@ -1,0 +1,13 @@
+apply plugin: 'com.novoda.bintray-release'
+
+publish {
+    userOrg = 'liuyuchuan'
+    groupId = commonProp['group']
+    artifactId = 'app-inject'
+    publishVersion = commonProp['versionName']
+    desc = commonProp['desc']
+    website = 'https://github.com/SirLYC/AppInject'
+    bintrayUser=privateProp['bintrayUser']
+    bintrayKey=privateProp['bintrayKey']
+    dryRun=false
+}

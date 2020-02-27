@@ -1,6 +1,7 @@
 apply plugin: 'groovy'
 apply plugin: 'maven'
 apply plugin: "com.gradle.plugin-publish"
+apply plugin: "java-gradle-plugin"
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -35,8 +36,19 @@ uploadArchives {
         mavenDeployer {
             pom.groupId = groupId
             pom.version = versionName
-            pom.artifactId = "app-inject"
+            pom.artifactId = commonProp['pluginId']
             repository(url: uri('../repo'))
+        }
+    }
+}
+
+final pluginId = "${commonProp['group']}.${commonProp['pluginId']}"
+
+gradlePlugin {
+    plugins {
+        simplePlugin {
+            id = pluginId
+            implementationClass = 'com.lyc.appinject.InjectPlugin'
         }
     }
 }
@@ -49,7 +61,7 @@ pluginBundle {
 
     plugins {
         appInjectPlugin {
-            id = 'com.lyc.app-inject'
+            id = pluginId
             displayName = 'AppInject'
         }
     }

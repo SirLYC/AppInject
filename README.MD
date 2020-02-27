@@ -34,22 +34,22 @@ public class TestApiImpl implements ITestApi {
 Now you can get instance of ITestApi at any module which depends on `module A`. No need to depend on `module B`:
 
 ``` kotlin
-// use ModuleApi.getInstance().getOneToManyApiList() if oneToMany == true
-val testApi = ModuleApi.getInstance().getSingleApi(ITestApi::class.java)
+// use AppInject.getInstance().getOneToManyApiList() if oneToMany == true
+val testApi = AppInject.getInstance().getSingleApi(ITestApi::class.java)
 Log.d(TAG, testApi.logMsg())
 ```
 
 ## Kotlin Simplify
 
-Use kotlin can simplify call to `ModuleApi`, for example:
+Use kotlin can simplify call to `AppInject`, for example:
 
 ``` kotlin
 inline fun <reified T> getSingleApi(): T? {
-    return ModuleApi.getInstance().getSingleApi(T::class.java)
+    return AppInject.getInstance().getSingleApi(T::class.java)
 }
 
 inline fun <reified T> getOneToManyApiList(): List<T> {
-    return ModuleApi.getInstance().getOneToManyApiList(T::class.java)
+    return AppInject.getInstance().getOneToManyApiList(T::class.java)
 }
 ```
 

@@ -24,7 +24,7 @@ class InitSingleApiMapMethodVisitor extends MethodVisitor implements Opcodes {
         singleApiMap.forEach((superClass, impl) -> {
             System.out.println("Put singleApi: " + superClass + " -> " + impl);
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitFieldInsn(GETFIELD, "com/lyc/appinject/ModuleApiHolders", "singleApiClassMap", "Ljava/util/Map;");
+            mv.visitFieldInsn(GETFIELD, "com/lyc/appinject/AppInjectHolders", "singleApiClassMap", "Ljava/util/Map;");
             mv.visitLdcInsn(Type.getType("L" + superClass + ";"));
             mv.visitLdcInsn(Type.getType("L" + impl.className + ";"));
             mv.visitLdcInsn(impl.createMethod);

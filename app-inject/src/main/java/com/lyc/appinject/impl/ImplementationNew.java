@@ -1,6 +1,6 @@
 package com.lyc.appinject.impl;
 
-import com.lyc.appinject.ModuleApi;
+import com.lyc.appinject.AppInject;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -23,8 +23,14 @@ public class ImplementationNew extends Implementation {
 
         try {
             return clazz.getConstructor().newInstance();
-        } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            ModuleApi.getLogger().e(TAG, null, e);
+        } catch (InstantiationException e) {
+            AppInject.getLogger().e(TAG, null, e);
+        } catch (NoSuchMethodException e) {
+            AppInject.getLogger().e(TAG, null, e);
+        } catch (InvocationTargetException e) {
+            AppInject.getLogger().e(TAG, null, e);
+        } catch (IllegalAccessException e) {
+            AppInject.getLogger().e(TAG, null, e);
         }
 
         return null;

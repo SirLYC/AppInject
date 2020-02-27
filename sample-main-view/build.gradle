@@ -29,7 +29,11 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.core:core-ktx:1.2.0'
-    implementation project(':app-inject')
+    if (commonProp['testRemoteRepo'] == "true") {
+        implementation "com.lyc:app-inject:${commonProp['versionName']}"
+    } else {
+        implementation project(':app-inject')
+    }
     implementation project(":sample-api")
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

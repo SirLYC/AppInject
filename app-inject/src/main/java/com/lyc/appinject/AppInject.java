@@ -16,9 +16,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * Created by Liu Yuchuan on 2020/1/12.
  */
-public class ModuleApi {
+public class AppInject {
     private static final Lock INSTANCE_LOCK = new ReentrantLock();
-    private volatile static ModuleApi instance;
+    private static final String TAG = "AppInject";
     private ReadWriteLock singleApiReadWriteLock = new ReentrantReadWriteLock();
     private Map<Class<?>, Object> singleApiCache = new HashMap<>();
 
@@ -27,10 +27,9 @@ public class ModuleApi {
 
     private Lock userLoggerLock = new ReentrantLock();
     private ILogger userLogger;
+    private volatile static AppInject instance;
 
-    private static final String TAG = "ModuleApi";
-
-    private ModuleApi() {
+    private AppInject() {
 
     }
 
@@ -60,12 +59,12 @@ public class ModuleApi {
         return userLogger == null ? DefaultLogger.getInstance() : userLogger;
     }
 
-    public static ModuleApi getInstance() {
+    public static AppInject getInstance() {
         if (instance == null) {
             try {
                 INSTANCE_LOCK.lock();
                 if (instance == null) {
-                    instance = new ModuleApi();
+                    instance = new AppInject();
                 }
             } finally {
                 INSTANCE_LOCK.unlock();
@@ -99,7 +98,7 @@ public class ModuleApi {
                 writeLock.lock();
                 serviceImpl = singleApiCache.get(clazz);
                 if (serviceImpl == null) {
-                    Implementation impl = ModuleApiHolders.getInstance().getSingleImpl(clazz);
+                    Implementation impl = AppInjectHolders.getInstance().getSingleImpl(clazz);
                     if (impl != null) {
                         serviceImpl = impl.createInstance();
                         if (serviceImpl != null) {
@@ -159,7 +158,7 @@ public class ModuleApi {
                         result.add((T) o);
                     }
                 } else {
-                    List<Implementation> impls = ModuleApiHolders.getInstance().getOneToManyImplList(clazz);
+                    List<Implementation> impls = AppInjectHolders.getInstance().getOneToManyImplList(clazz);
                     if (impls != null) {
                         for (Implementation impl : impls) {
                             Object instance = impl.createInstance();

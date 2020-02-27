@@ -18,7 +18,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+}
 
+if (publishAppInjectModule) {
+    apply from: 'publish.gradle'
 }
 
 dependencies {

@@ -31,7 +31,7 @@ class InitOneToManyApiMapVisitor extends AdviceAdapter implements Opcodes {
                 Label l0 = new Label();
                 mv.visitLabel(l0);
                 mv.visitVarInsn(ALOAD, 0);
-                mv.visitFieldInsn(GETFIELD, "com/lyc/appinject/ModuleApiHolders", "oneToManyApiClassMap", "Ljava/util/Map;");
+                mv.visitFieldInsn(GETFIELD, "com/lyc/appinject/AppInjectHolders", "oneToManyApiClassMap", "Ljava/util/Map;");
                 mv.visitLdcInsn(Type.getType("L" + superClass + ";"));
                 mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
                 mv.visitTypeInsn(CHECKCAST, "java/util/List");
@@ -44,7 +44,7 @@ class InitOneToManyApiMapVisitor extends AdviceAdapter implements Opcodes {
                 mv.visitMethodInsn(INVOKESPECIAL, "java/util/ArrayList", "<init>", "()V", false);
                 mv.visitVarInsn(ASTORE, 1);
                 mv.visitVarInsn(ALOAD, 0);
-                mv.visitFieldInsn(GETFIELD, "com/lyc/appinject/ModuleApiHolders", "oneToManyApiClassMap", "Ljava/util/Map;");
+                mv.visitFieldInsn(GETFIELD, "com/lyc/appinject/AppInjectHolders", "oneToManyApiClassMap", "Ljava/util/Map;");
                 mv.visitLdcInsn(Type.getType("L" + superClass + ";"));
                 mv.visitVarInsn(ALOAD, 1);
                 mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true);

@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -46,7 +45,7 @@ import java.util.zip.ZipEntry;
  */
 public class InjectTransform extends Transform {
 
-    private static final String MODULE_HOLDERS_CLASS_NAME = "com/lyc/appinject/ModuleApiHolders.class";
+    private static final String MODULE_HOLDERS_CLASS_NAME = "com/lyc/appinject/AppInjectHolders.class";
     private final Project project;
     private final Set<String> singleApiClasses = new HashSet<>();
     private final Set<String> oneToManyApiClasses = new HashSet<>();
@@ -106,7 +105,7 @@ public class InjectTransform extends Transform {
         TransformOutputProvider outputProvider = transformInvocation.getOutputProvider();
         outputProvider.deleteAll();
 
-        JarInput moduleApiHoldersJar = null;
+        JarInput appInjectHoldersJar = null;
 
         for (TransformInput input : inputs) {
             for (DirectoryInput directoryInput : input.getDirectoryInputs()) {
@@ -115,30 +114,30 @@ public class InjectTransform extends Transform {
 
             for (JarInput jarInput : input.getJarInputs()) {
                 if (collectInfoFromJarInput(jarInput, transformInvocation.getOutputProvider())) {
-                    moduleApiHoldersJar = jarInput;
+                    appInjectHoldersJar = jarInput;
                 }
             }
         }
 
-        if (moduleApiHoldersJar == null) {
+        if (appInjectHoldersJar == null) {
             throw new RuntimeException("Cannot find " + MODULE_HOLDERS_CLASS_NAME + "! Please check your proguard or if it's on your external libraries.");
         }
 
         checkCollectedInfo();
 
         if (!apiImplClasses.isEmpty()) {
-            findModuleApiHoldersAndWrite(moduleApiHoldersJar, transformInvocation.getOutputProvider());
+            findAppInjectHoldersAndWrite(appInjectHoldersJar, transformInvocation.getOutputProvider());
         } else {
             System.out.println("No need to write to API, just copy jar...");
-            final File dest = outputProvider.getContentLocation(moduleApiHoldersJar.getFile().getAbsolutePath(), moduleApiHoldersJar.getContentTypes(), moduleApiHoldersJar.getScopes(), Format.JAR);
-            FileUtils.copyFile(moduleApiHoldersJar.getFile(), dest);
+            final File dest = outputProvider.getContentLocation(appInjectHoldersJar.getFile().getAbsolutePath(), appInjectHoldersJar.getContentTypes(), appInjectHoldersJar.getScopes(), Format.JAR);
+            FileUtils.copyFile(appInjectHoldersJar.getFile(), dest);
         }
 
         System.out.println("Inject Plugin cost " + (System.currentTimeMillis() - startTime) + "ms");
         System.out.println("===================== Inject Plugin Transform finished =====================");
     }
 
-    private void findModuleApiHoldersAndWrite(JarInput jarInput, TransformOutputProvider outputProvider) throws IOException {
+    private void findAppInjectHoldersAndWrite(JarInput jarInput, TransformOutputProvider outputProvider) throws IOException {
 
         File tmpFile = new File(project.getBuildDir(), "tmp.jar");
         try {
@@ -181,7 +180,7 @@ public class InjectTransform extends Transform {
                         }
                     }
 
-                    StringBuilder outputSb = new StringBuilder("============== Starts to write to ModuleApiHolders ==============")
+                    StringBuilder outputSb = new StringBuilder("============== Starts to write to AppInjectHolders ==============")
                             .append("\n\n")
                             .append("***********************************************************\n")
                             .append("************** begin SingleApiImplClassesMap **************\n")
@@ -217,7 +216,7 @@ public class InjectTransform extends Transform {
                     byte[] code = classWriter.toByteArray();
                     jarOutputStream.write(code);
 
-                    System.out.println("============== Finish writing to ModuleApiHolders ==============\n");
+                    System.out.println("============== Finish writing to AppInjectHolders ==============\n");
 
                 } else {
                     jarOutputStream.putNextEntry(zipEntry);
@@ -304,7 +303,7 @@ public class InjectTransform extends Transform {
     /**
      * @param jarInput       jar input file
      * @param outputProvider from TransformInvocation
-     * @return if this jarInput is where ModuleApiHolders locates
+     * @return if this jarInput is where ApiInjectHolders locates
      */
     private boolean collectInfoFromJarInput(JarInput jarInput, TransformOutputProvider outputProvider) throws IOException {
         if (jarInput == null) {

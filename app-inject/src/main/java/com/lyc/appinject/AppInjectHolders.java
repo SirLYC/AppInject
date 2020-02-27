@@ -12,24 +12,24 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by Liu Yuchuan on 2020/1/12.
  * This is a class for ASM to modify byte code
  */
-class ModuleApiHolders {
+class AppInjectHolders {
 
     private static final Lock INSTANCE_LOCK = new ReentrantLock();
-    private static volatile ModuleApiHolders instance;
+    private static volatile AppInjectHolders instance;
     private Map<Class<?>, Implementation> singleApiClassMap = new HashMap<>();
     private Map<Class<?>, List<Implementation>> oneToManyApiClassMap = new HashMap<>();
 
-    private ModuleApiHolders() {
+    private AppInjectHolders() {
         initSingleApiMap();
         initOneToManyApiMap();
     }
 
-    static ModuleApiHolders getInstance() {
+    static AppInjectHolders getInstance() {
         if (instance == null) {
             try {
                 INSTANCE_LOCK.lock();
                 if (instance == null) {
-                    instance = new ModuleApiHolders();
+                    instance = new AppInjectHolders();
                 }
             } finally {
                 INSTANCE_LOCK.unlock();
