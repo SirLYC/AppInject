@@ -2,9 +2,13 @@
 
 A lightweight cross-module dependency-injection library for Android.
 
-[ ![AppInject](https://api.bintray.com/packages/liuyuchuan/maven/app-inject-plugin/images/download.svg?version=0.2.0) ](https://bintray.com/liuyuchuan/maven/app-inject-plugin/0.2.0/link)
+- AppInject aar library
 
-[ ![AppInjectPlugin](https://api.bintray.com/packages/liuyuchuan/maven/app-inject/images/download.svg?version=0.2.0) ](https://bintray.com/liuyuchuan/maven/app-inject/0.2.0/link)
+[ ![AppInject](https://api.bintray.com/packages/liuyuchuan/maven/app-inject/images/download.svg?version=0.2.0) ](https://bintray.com/liuyuchuan/maven/app-inject/0.2.0/link)
+
+- AppInject gradle plugin
+
+[ ![AppInjectPlugin](https://api.bintray.com/packages/liuyuchuan/maven/app-inject-plugin/images/download.svg?version=0.3.0) ](https://bintray.com/liuyuchuan/maven/app-inject-plugin/0.3.0/link)
 
 ## Import
 
