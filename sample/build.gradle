@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 
-if (commonProp["testInjectPluginLocal"] == "true") {
+if (commonProp["testInjectPluginLocal"] == "true" || commonProp["testRemoteRepo"] == "true") {
     apply plugin: "com.lyc.app-inject-plugin"
 }
 

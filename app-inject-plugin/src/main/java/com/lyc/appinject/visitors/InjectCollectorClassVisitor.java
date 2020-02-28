@@ -4,6 +4,7 @@ package com.lyc.appinject.visitors;
 import com.lyc.appinject.data.Impl;
 
 import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -33,6 +34,9 @@ public class InjectCollectorClassVisitor extends ClassVisitor implements Opcodes
     private String currentName;
     private String currentCreateMethod;
     private String[] currentInterfaces;
+    private String superNameFromClass;
+    private boolean isAbstractClass;
+    private boolean isInterface;
 
     public InjectCollectorClassVisitor(Set<String> singleApiClasses, Set<String> oneToManyInjectApiClasses, Map<String, List<Impl>> ImplClassesMap) {
         super(ASM6);
@@ -44,15 +48,30 @@ public class InjectCollectorClassVisitor extends ClassVisitor implements Opcodes
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
         currentName = name;
+        superNameFromClass = superName;
         currentInterfaces = interfaces;
+        isAbstractClass = (access & ACC_ABSTRACT) != 0;
+        isInterface = (access & ACC_INTERFACE) != 0;
         super.visit(version, access, name, signature, superName, interfaces);
+    }
+
+    @Override
+    public void visitAttribute(Attribute attr) {
+
+        super.visitAttribute(attr);
     }
 
     @Override
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
         if (INJECT_API_DESC.equals(desc)) {
+            if (!isInterface && !isAbstractClass) {
+                throw new RuntimeException("Only interface or abstract class can be annotated with @InjectApi");
+            }
             return new InjectApiAnnotationVisitor(currentName);
         } else if (INJECT_API_IMPL_DESC.equals(desc)) {
+            if (isAbstractClass) {
+                throw new RuntimeException("Abstract class " + currentName + " cannot be annotated with @InjectApiImpl!");
+            }
             return new InjectApiImplAnnotationVisitor(currentName);
         }
         return super.visitAnnotation(desc, visible);
@@ -126,10 +145,17 @@ public class InjectCollectorClassVisitor extends ClassVisitor implements Opcodes
                     }
 
                     if (!isImpl) {
-                        throw new RuntimeException("Impl " + currentName + " did not implement " + superName + "!!!");
+                        if (superName.equals(superNameFromClass)) {
+                            isImpl = true;
+                        }
+                    }
+
+                    if (!isImpl) {
+                        String msg = "Impl " + currentName + " does not explicit implement(extend) " + superName + "!";
+                        System.err.println("WARNING: " + msg + " Which may lead to runtime error when cast " + currentName + " to " + superName);
+//                        throw new RuntimeException(msg);
                     }
                     currentSuperName = superName;
-
                 } else {
                     throw new RuntimeException("Cannot recognize implement: Name=" + currentName + ", extension param=" + value);
                 }
@@ -139,13 +165,13 @@ public class InjectCollectorClassVisitor extends ClassVisitor implements Opcodes
 
         @Override
         public void visitEnd() {
-            if (currentSuperName != null) {
-                List<Impl> list = ImplClassesMap.getOrDefault(currentSuperName, new ArrayList<>());
-                list.add(new Impl(currentName, currentCreateMethod));
-                ImplClassesMap.put(currentSuperName, list);
-                System.out.println("Find a valid @InjectApiImpL: super=" + currentSuperName + ", imp=" + currentName);
-                currentSuperName = null;
-            }
+//            if (currentSuperName != null) {
+            List<Impl> list = ImplClassesMap.getOrDefault(currentSuperName, new ArrayList<>());
+            list.add(new Impl(currentName, currentCreateMethod));
+            ImplClassesMap.put(currentSuperName, list);
+            System.out.println("Find a valid @InjectApiImpL: super=" + currentSuperName + ", imp=" + currentName);
+            currentSuperName = null;
+//            }
             super.visitEnd();
         }
     }

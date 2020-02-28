@@ -49,6 +49,9 @@ dependencies {
 
 Define your interface(`api`) in `module A`. For example:
 
+> Or abstract class.
+> `@InjectApi` supports both abstract class and interface.
+
 ``` java
 // oneToMany default value is false
 // if oneToMany == true
@@ -60,7 +63,7 @@ public interface ITestApi {
 }
 ```
 
-Implement this interface in **any module**. We call it `module B`:
+Implement this interface (or extends class) in **any module**. We call it `module B`:
 
 ``` java
 @InjectApiImpl(api = ITestApi.class)

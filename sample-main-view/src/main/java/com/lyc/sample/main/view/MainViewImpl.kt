@@ -5,10 +5,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.TextView
 import com.lyc.appinject.annotations.InjectApiImpl
-import com.lyc.appinject.sample.api.IGetInstanceApi
-import com.lyc.appinject.sample.api.IMainView
-import com.lyc.appinject.sample.api.IOneToManyApi
-import com.lyc.appinject.sample.api.ISingleApi
+import com.lyc.appinject.sample.api.*
 
 /**
  * Created by Liu Yuchuan on 2020/2/27.
@@ -25,6 +22,9 @@ class MainViewImpl : IMainView {
             }
             val getInstanceApi: IGetInstanceApi = getSingleApi()!!
             append(getInstanceApi.logMsg() + "\n")
+
+            val abstractApi = getSingleApi<AbstractApi>()!!
+            append(abstractApi.logMsg() + "\n")
         }
     }
 }
