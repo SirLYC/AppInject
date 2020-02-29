@@ -136,6 +136,12 @@ public class InjectCollectorClassVisitor extends ClassVisitor implements Opcodes
                         throw new RuntimeException("currentInterfaces==null! current=" + currentName + ", super=" + superName);
                     }
 
+                    System.out.println("Super of " + currentName + " is " + superNameFromClass);
+                    if (((superNameFromClass == null) || ("java/lang/Object").equals(superNameFromClass)) &&
+                            currentInterfaces.length == 0) {
+                        throw new RuntimeException(currentName + " never implements or extends " + superName + "!");
+                    }
+
                     boolean isImpl = false;
                     for (String currentInterface : currentInterfaces) {
                         if (superName.equals(currentInterface)) {

@@ -8,7 +8,7 @@ A lightweight cross-module dependency-injection library for Android.
 
 - AppInject gradle plugin
 
-[ ![AppInjectPlugin](https://api.bintray.com/packages/liuyuchuan/maven/app-inject-plugin/images/download.svg?version=0.3.0) ](https://bintray.com/liuyuchuan/maven/app-inject-plugin/0.3.0/link)
+[ ![AppInjectPlugin](https://api.bintray.com/packages/liuyuchuan/maven/app-inject-plugin/images/download.svg?version=0.3.1) ](https://bintray.com/liuyuchuan/maven/app-inject-plugin/0.3.1/link)
 
 ## Import
 
