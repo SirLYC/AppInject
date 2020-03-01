@@ -47,7 +47,7 @@ buildscript {
             classpath "${commonProp['group']}:${commonProp['pluginId']}:${buildInfo['versionName']}"
         } else if (commonProp['testRemoteRepo'] == "true") {
             // remote repository
-            classpath 'com.lyc:app-inject-plugin:0.3.1'
+            classpath 'com.lyc:app-inject-plugin:0.4.0'
         }
 
         if (publishAppInjectModule || publishPlugin) {

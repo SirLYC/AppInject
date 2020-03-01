@@ -9,6 +9,8 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +27,9 @@ public class InjectCollectorClassVisitor extends ClassVisitor implements Opcodes
     private final Set<String> oneToManyInjectApiClasses;
     private final Map<String, List<Impl>> ImplClassesMap;
 
+    private final Map<String, String> typeCheckMap;
+    private final Map<String, Set<String>> parentMap;
+
     private static final String CREATE_METHOD_DESC = "Lcom/lyc/appinject/CreateMethod;";
     private static final String CREATE_METHOD_PARAM = "createMethod";
 
@@ -38,11 +43,13 @@ public class InjectCollectorClassVisitor extends ClassVisitor implements Opcodes
     private boolean isAbstractClass;
     private boolean isInterface;
 
-    public InjectCollectorClassVisitor(Set<String> singleApiClasses, Set<String> oneToManyInjectApiClasses, Map<String, List<Impl>> ImplClassesMap) {
+    public InjectCollectorClassVisitor(Set<String> singleApiClasses, Set<String> oneToManyInjectApiClasses, Map<String, List<Impl>> ImplClassesMap, Map<String, String> typeCheckMap, Map<String, Set<String>> parentMap) {
         super(ASM6);
         this.singleApiClasses = singleApiClasses;
         this.oneToManyInjectApiClasses = oneToManyInjectApiClasses;
         this.ImplClassesMap = ImplClassesMap;
+        this.typeCheckMap = typeCheckMap;
+        this.parentMap = parentMap;
     }
 
     @Override
@@ -52,6 +59,14 @@ public class InjectCollectorClassVisitor extends ClassVisitor implements Opcodes
         currentInterfaces = interfaces;
         isAbstractClass = (access & ACC_ABSTRACT) != 0;
         isInterface = (access & ACC_INTERFACE) != 0;
+        Set<String> set = new HashSet<>();
+        if (superName != null && !"java/lang/Object".equals(superName)) {
+            set.add(superName);
+        }
+        if (interfaces != null) {
+            set.addAll(Arrays.asList(interfaces));
+        }
+        parentMap.put(name, set);
         super.visit(version, access, name, signature, superName, interfaces);
     }
 
@@ -132,21 +147,19 @@ public class InjectCollectorClassVisitor extends ClassVisitor implements Opcodes
                     // remove "L" and ";" from method desc
                     String superName = desc.substring(1, desc.length() - 1);
 
-                    if (currentInterfaces == null) {
-                        throw new RuntimeException("currentInterfaces==null! current=" + currentName + ", super=" + superName);
-                    }
-
                     System.out.println("Super of " + currentName + " is " + superNameFromClass);
                     if (((superNameFromClass == null) || ("java/lang/Object").equals(superNameFromClass)) &&
-                            currentInterfaces.length == 0) {
+                            (currentInterfaces == null || currentInterfaces.length == 0)) {
                         throw new RuntimeException(currentName + " never implements or extends " + superName + "!");
                     }
 
                     boolean isImpl = false;
-                    for (String currentInterface : currentInterfaces) {
-                        if (superName.equals(currentInterface)) {
-                            isImpl = true;
-                            break;
+                    if (currentInterfaces != null) {
+                        for (String currentInterface : currentInterfaces) {
+                            if (superName.equals(currentInterface)) {
+                                isImpl = true;
+                                break;
+                            }
                         }
                     }
 
@@ -157,9 +170,10 @@ public class InjectCollectorClassVisitor extends ClassVisitor implements Opcodes
                     }
 
                     if (!isImpl) {
-                        String msg = "Impl " + currentName + " does not explicit implement(extend) " + superName + "!";
-                        System.err.println("WARNING: " + msg + " Which may lead to runtime error when cast " + currentName + " to " + superName);
+//                        String msg = "Impl " + currentName + " does not explicit implement(extend) " + superName + "!";
+//                        System.err.println("WARNING: " + msg + " Which may lead to runtime error when cast " + currentName + " to " + superName);
 //                        throw new RuntimeException(msg);
+                        typeCheckMap.put(currentName, superName);
                     }
                     currentSuperName = superName;
                 } else {

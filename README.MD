@@ -8,7 +8,7 @@ A lightweight cross-module dependency-injection library for Android.
 
 - AppInject gradle plugin
 
-[ ![AppInjectPlugin](https://api.bintray.com/packages/liuyuchuan/maven/app-inject-plugin/images/download.svg?version=0.3.1) ](https://bintray.com/liuyuchuan/maven/app-inject-plugin/0.3.1/link)
+[ ![AppInjectPlugin](https://api.bintray.com/packages/liuyuchuan/maven/app-inject-plugin/images/download.svg?version=0.4.0) ](https://bintray.com/liuyuchuan/maven/app-inject-plugin/0.4.0/link)
 
 ## Import
 
@@ -122,6 +122,9 @@ val testApi:ITestApi? = getSingleApi()
 
 ## Run this project in local
 
+> Local modifies on `app-inject` module will work immediately.</br>
+> Use local maven for `app-inject-plugin` module.
+
 **Step1** Modify file `common.properties` at root directory.
 
 ``` properties
@@ -140,6 +143,19 @@ testInjectPluginLocal=true
 ```
 
 **Step4** Gradle sync. Now you can run `sample` module.
+
+## Run sample with remote repository
+> Use `jcenter` for `app-inject` and `app-inject-plugin`.
+> Local modified on both module will not work.
+
+**Step1** Modify file `common.properties` at root directory.
+
+``` properties
+testInjectPluginLocal=false
+testRemoteRepo=true
+```
+
+**Step2** Sync project and run `sample` module
 
 ## License
 

@@ -52,7 +52,7 @@ class InitOneToManyApiMapVisitor extends AdviceAdapter implements Opcodes {
                 mv.visitLabel(addListPos);
                 mv.visitFrame(Opcodes.F_APPEND, 1, new Object[]{"java/util/List"}, 0, null);
                 for (Impl imp : imps) {
-                    System.out.println("-> put" + imp.className + ";");
+                    System.out.println("-> Put " + imp.className + ";");
                     mv.visitVarInsn(ALOAD, 1);
                     mv.visitLdcInsn(Type.getType("L" + imp.className + ";"));
                     mv.visitLdcInsn(imp.createMethod);

@@ -51,6 +51,9 @@ public class InjectTransform extends Transform {
     private final Set<String> oneToManyApiClasses = new HashSet<>();
     private final Map<String, List<Impl>> apiImplClasses = new HashMap<>();
 
+    private final Map<String, String> typeCheckMap = new HashMap<>();
+    private final Map<String, Set<String>> parentMap = new HashMap<>();
+
     InjectTransform(Project project) {
         this.project = project;
     }
@@ -238,7 +241,42 @@ public class InjectTransform extends Transform {
         }
     }
 
+    private boolean checkExtendsOrImplementsRelation(String name, String superName) {
+        String currentName = name;
+        Set<String> currentParents;
+        currentParents = parentMap.get(currentName);
+        if (currentParents == null) {
+            return false;
+        }
+
+        if (currentParents.contains(superName)) {
+            return true;
+        }
+        for (String parent : currentParents) {
+            if (checkExtendsOrImplementsRelation(parent, superName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private void checkCollectedInfo() {
+
+        Map<String, String> errorMap = new HashMap<>();
+        typeCheckMap.forEach((name, superName) -> {
+            if (!checkExtendsOrImplementsRelation(name, superName)) {
+                errorMap.put(name, superName);
+            }
+        });
+        if (!errorMap.isEmpty()) {
+            StringBuilder sb = new StringBuilder("Type check error:\n");
+            errorMap.forEach((name, superName) -> {
+                sb.append("- ").append(name).append(" does not extends or implements ").append(superName).append(";\n");
+            });
+            sb.append("Please check your code and rebuild again.");
+            throw new RuntimeException(sb.toString());
+        }
 
         HashSet<String> intersections = new HashSet<>(singleApiClasses);
         intersections.retainAll(oneToManyApiClasses);
@@ -349,7 +387,7 @@ public class InjectTransform extends Transform {
     private void collectInfoFromClass(String name, byte[] classBytes) {
         if (acceptClassFileName(name)) {
             ClassReader classReader = new ClassReader(classBytes);
-            InjectCollectorClassVisitor cv = new InjectCollectorClassVisitor(singleApiClasses, oneToManyApiClasses, apiImplClasses);
+            InjectCollectorClassVisitor cv = new InjectCollectorClassVisitor(singleApiClasses, oneToManyApiClasses, apiImplClasses, typeCheckMap, parentMap);
             classReader.accept(cv, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
         }
     }
