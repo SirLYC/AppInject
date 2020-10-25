@@ -41,7 +41,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:$android_gradle_version"
+        classpath "com.android.tools.build:gradle:${android_gradle_version}"
 
         if (testLocal) {
             classpath "${commonProp['group']}:${commonProp['pluginId']}:${buildInfo['versionName']}"
